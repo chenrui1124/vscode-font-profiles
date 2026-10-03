@@ -1,0 +1,53 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "watch",
+      "dependsOn": ["npm: check", "npm: watch"],
+      "dependsOrder": "sequence",
+      "problemMatcher": [],
+      "group": { "kind": "build", "isDefault": true }
+    },
+    {
+      "type": "npm",
+      "script": "check",
+      "problemMatcher": [],
+      "presentation": { "reveal": "silent" }
+    },
+    {
+      "type": "npm",
+      "script": "watch",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "vite-plus",
+        "pattern": { "regexp": "^(?!)()(.*)$", "file": 1, "message": 2 },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Build start",
+          "endsPattern": "\\[extension\\] Rebuilt in"
+        }
+      },
+      "presentation": { "group": "watch", "reveal": "silent" }
+    },
+    {
+      "type": "npm",
+      "script": "watch-tests",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "vite-plus-tests",
+        "pattern": { "regexp": "^(?!)()(.*)$", "file": 1, "message": 2 },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Build start",
+          "endsPattern": "\\[tests\\] Rebuilt in"
+        }
+      },
+      "presentation": { "group": "watch", "reveal": "silent" }
+    },
+    {
+      "label": "tasks: watch-tests",
+      "dependsOn": ["watch", "npm: watch-tests"],
+      "problemMatcher": []
+    }
+  ]
+}

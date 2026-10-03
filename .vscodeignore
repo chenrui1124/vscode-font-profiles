@@ -1,0 +1,16 @@
+.vscode/**
+.vscode-test/**
+.vite/**
+out/**
+node_modules/**
+src/**
+.gitignore
+.yarnrc
+vite.config.mts
+pnpm-lock.yaml
+pnpm-workspace.yaml
+vsc-extension-quickstart.md
+**/tsconfig.json
+**/*.map
+**/*.ts
+**/.vscode-test.*

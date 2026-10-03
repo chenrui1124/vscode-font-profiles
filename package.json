@@ -1,0 +1,42 @@
+{
+  "name": "font-profiles",
+  "displayName": "Font Profiles",
+  "version": "0.0.0",
+  "description": "",
+  "categories": [],
+  "type": "module",
+  "main": "./dist/extension.js",
+  "scripts": {
+    "build": "vp check && vp pack --filter extension --minify --no-sourcemap",
+    "check": "vp check",
+    "check-types": "vp check --no-lint",
+    "compile": "vp check && vp pack --filter extension",
+    "compile-tests": "vp check && vp pack --filter tests",
+    "lint": "vp lint",
+    "package": "vp run build",
+    "pretest": "vp check && vp pack",
+    "test": "vscode-test",
+    "vscode:prepublish": "pnpm run package",
+    "watch": "vp pack --filter extension --watch --on-success \"vp check\"",
+    "watch-tests": "vp pack --filter tests --watch --on-success \"vp check\""
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "~26.6.4",
+    "@types/vscode": "^1.140.0",
+    "@vscode/test-cli": "^0.0.15",
+    "@vscode/test-electron": "^3.0.0",
+    "vite-plus": "^1.0.0"
+  },
+  "overrides": {
+    "diff": "^8.0.4",
+    "serialize-javascript": "^7.0.6"
+  },
+  "contributes": {
+    "commands": []
+  },
+  "activationEvents": [],
+  "engines": {
+    "vscode": "^1.140.0"
+  }
+}

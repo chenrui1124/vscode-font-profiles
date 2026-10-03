@@ -20,9 +20,16 @@
     "watch": "vp pack --filter extension --watch --on-success \"vp check\"",
     "watch-tests": "vp pack --filter tests --watch --on-success \"vp check\""
   },
+  "dependencies": {
+    "@valibot/to-json-schema": "^1.8.0",
+    "es-toolkit": "^1.52.0",
+    "valibot": "^1.5.0"
+  },
   "devDependencies": {
+    "@npmcli/package-json": "^8.0.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "~26.6.4",
+    "@types/npmcli__package-json": "^4.0.4",
     "@types/vscode": "^1.140.0",
     "@vscode/test-cli": "^0.0.15",
     "@vscode/test-electron": "^3.0.0",

@@ -12,6 +12,7 @@
     "check-types": "vp check --no-lint",
     "compile": "vp check && vp pack --filter extension",
     "compile-tests": "vp check && vp pack --filter tests",
+    "generate-schema": "node scripts/generate-schema.ts",
     "lint": "vp lint",
     "package": "vp run build",
     "pretest": "vp check && vp pack",
@@ -40,7 +41,852 @@
     "serialize-javascript": "^7.0.6"
   },
   "contributes": {
-    "commands": []
+    "commands": [],
+    "configuration": {
+      "title": "Font Profiles",
+      "type": "object",
+      "properties": {
+        "fontProfiles.profiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Name of the font profile."
+              },
+              "settings": {
+                "type": "object",
+                "properties": {
+                  "editor.fontFamily": {
+                    "type": "string"
+                  },
+                  "editor.fontLigatures": {
+                    "anyOf": [
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "aalt": {
+                            "type": "boolean"
+                          },
+                          "abvf": {
+                            "type": "boolean"
+                          },
+                          "abvm": {
+                            "type": "boolean"
+                          },
+                          "abvs": {
+                            "type": "boolean"
+                          },
+                          "afrc": {
+                            "type": "boolean"
+                          },
+                          "akhn": {
+                            "type": "boolean"
+                          },
+                          "apkn": {
+                            "type": "boolean"
+                          },
+                          "blwf": {
+                            "type": "boolean"
+                          },
+                          "blwm": {
+                            "type": "boolean"
+                          },
+                          "blws": {
+                            "type": "boolean"
+                          },
+                          "calt": {
+                            "type": "boolean"
+                          },
+                          "case": {
+                            "type": "boolean"
+                          },
+                          "ccmp": {
+                            "type": "boolean"
+                          },
+                          "cfar": {
+                            "type": "boolean"
+                          },
+                          "chws": {
+                            "type": "boolean"
+                          },
+                          "cjct": {
+                            "type": "boolean"
+                          },
+                          "clig": {
+                            "type": "boolean"
+                          },
+                          "cpct": {
+                            "type": "boolean"
+                          },
+                          "cpsp": {
+                            "type": "boolean"
+                          },
+                          "cswh": {
+                            "type": "boolean"
+                          },
+                          "curs": {
+                            "type": "boolean"
+                          },
+                          "c2pc": {
+                            "type": "boolean"
+                          },
+                          "c2sc": {
+                            "type": "boolean"
+                          },
+                          "dist": {
+                            "type": "boolean"
+                          },
+                          "dlig": {
+                            "type": "boolean"
+                          },
+                          "dnom": {
+                            "type": "boolean"
+                          },
+                          "dtls": {
+                            "type": "boolean"
+                          },
+                          "expt": {
+                            "type": "boolean"
+                          },
+                          "falt": {
+                            "type": "boolean"
+                          },
+                          "fin2": {
+                            "type": "boolean"
+                          },
+                          "fin3": {
+                            "type": "boolean"
+                          },
+                          "fina": {
+                            "type": "boolean"
+                          },
+                          "flac": {
+                            "type": "boolean"
+                          },
+                          "frac": {
+                            "type": "boolean"
+                          },
+                          "fwid": {
+                            "type": "boolean"
+                          },
+                          "half": {
+                            "type": "boolean"
+                          },
+                          "haln": {
+                            "type": "boolean"
+                          },
+                          "halt": {
+                            "type": "boolean"
+                          },
+                          "hist": {
+                            "type": "boolean"
+                          },
+                          "hkna": {
+                            "type": "boolean"
+                          },
+                          "hlig": {
+                            "type": "boolean"
+                          },
+                          "hngl": {
+                            "type": "boolean"
+                          },
+                          "hojo": {
+                            "type": "boolean"
+                          },
+                          "hwid": {
+                            "type": "boolean"
+                          },
+                          "init": {
+                            "type": "boolean"
+                          },
+                          "isol": {
+                            "type": "boolean"
+                          },
+                          "ital": {
+                            "type": "boolean"
+                          },
+                          "jalt": {
+                            "type": "boolean"
+                          },
+                          "jp78": {
+                            "type": "boolean"
+                          },
+                          "jp83": {
+                            "type": "boolean"
+                          },
+                          "jp90": {
+                            "type": "boolean"
+                          },
+                          "jp04": {
+                            "type": "boolean"
+                          },
+                          "kern": {
+                            "type": "boolean"
+                          },
+                          "lfbd": {
+                            "type": "boolean"
+                          },
+                          "liga": {
+                            "type": "boolean"
+                          },
+                          "ljmo": {
+                            "type": "boolean"
+                          },
+                          "lnum": {
+                            "type": "boolean"
+                          },
+                          "locl": {
+                            "type": "boolean"
+                          },
+                          "ltra": {
+                            "type": "boolean"
+                          },
+                          "ltrm": {
+                            "type": "boolean"
+                          },
+                          "mark": {
+                            "type": "boolean"
+                          },
+                          "med2": {
+                            "type": "boolean"
+                          },
+                          "medi": {
+                            "type": "boolean"
+                          },
+                          "mgrk": {
+                            "type": "boolean"
+                          },
+                          "mkmk": {
+                            "type": "boolean"
+                          },
+                          "mset": {
+                            "type": "boolean"
+                          },
+                          "nalt": {
+                            "type": "boolean"
+                          },
+                          "nlck": {
+                            "type": "boolean"
+                          },
+                          "nukt": {
+                            "type": "boolean"
+                          },
+                          "numr": {
+                            "type": "boolean"
+                          },
+                          "onum": {
+                            "type": "boolean"
+                          },
+                          "opbd": {
+                            "type": "boolean"
+                          },
+                          "ordn": {
+                            "type": "boolean"
+                          },
+                          "ornm": {
+                            "type": "boolean"
+                          },
+                          "palt": {
+                            "type": "boolean"
+                          },
+                          "pcap": {
+                            "type": "boolean"
+                          },
+                          "pkna": {
+                            "type": "boolean"
+                          },
+                          "pnum": {
+                            "type": "boolean"
+                          },
+                          "pref": {
+                            "type": "boolean"
+                          },
+                          "pres": {
+                            "type": "boolean"
+                          },
+                          "pstf": {
+                            "type": "boolean"
+                          },
+                          "psts": {
+                            "type": "boolean"
+                          },
+                          "pwid": {
+                            "type": "boolean"
+                          },
+                          "qwid": {
+                            "type": "boolean"
+                          },
+                          "rand": {
+                            "type": "boolean"
+                          },
+                          "rclt": {
+                            "type": "boolean"
+                          },
+                          "rkrf": {
+                            "type": "boolean"
+                          },
+                          "rlig": {
+                            "type": "boolean"
+                          },
+                          "rphf": {
+                            "type": "boolean"
+                          },
+                          "rtbd": {
+                            "type": "boolean"
+                          },
+                          "rtla": {
+                            "type": "boolean"
+                          },
+                          "rtlm": {
+                            "type": "boolean"
+                          },
+                          "ruby": {
+                            "type": "boolean"
+                          },
+                          "rvrn": {
+                            "type": "boolean"
+                          },
+                          "salt": {
+                            "type": "boolean"
+                          },
+                          "sinf": {
+                            "type": "boolean"
+                          },
+                          "size": {
+                            "type": "boolean"
+                          },
+                          "smcp": {
+                            "type": "boolean"
+                          },
+                          "smpl": {
+                            "type": "boolean"
+                          },
+                          "ssty": {
+                            "type": "boolean"
+                          },
+                          "stch": {
+                            "type": "boolean"
+                          },
+                          "subs": {
+                            "type": "boolean"
+                          },
+                          "sups": {
+                            "type": "boolean"
+                          },
+                          "swsh": {
+                            "type": "boolean"
+                          },
+                          "titl": {
+                            "type": "boolean"
+                          },
+                          "tjmo": {
+                            "type": "boolean"
+                          },
+                          "tnam": {
+                            "type": "boolean"
+                          },
+                          "tnum": {
+                            "type": "boolean"
+                          },
+                          "trad": {
+                            "type": "boolean"
+                          },
+                          "twid": {
+                            "type": "boolean"
+                          },
+                          "unic": {
+                            "type": "boolean"
+                          },
+                          "valt": {
+                            "type": "boolean"
+                          },
+                          "vapk": {
+                            "type": "boolean"
+                          },
+                          "vatu": {
+                            "type": "boolean"
+                          },
+                          "vchw": {
+                            "type": "boolean"
+                          },
+                          "vert": {
+                            "type": "boolean"
+                          },
+                          "vhal": {
+                            "type": "boolean"
+                          },
+                          "vjmo": {
+                            "type": "boolean"
+                          },
+                          "vkna": {
+                            "type": "boolean"
+                          },
+                          "vkrn": {
+                            "type": "boolean"
+                          },
+                          "vpal": {
+                            "type": "boolean"
+                          },
+                          "vrt2": {
+                            "type": "boolean"
+                          },
+                          "vrtr": {
+                            "type": "boolean"
+                          },
+                          "zero": {
+                            "type": "boolean"
+                          },
+                          "cv01": {
+                            "type": "boolean"
+                          },
+                          "cv02": {
+                            "type": "boolean"
+                          },
+                          "cv03": {
+                            "type": "boolean"
+                          },
+                          "cv04": {
+                            "type": "boolean"
+                          },
+                          "cv05": {
+                            "type": "boolean"
+                          },
+                          "cv06": {
+                            "type": "boolean"
+                          },
+                          "cv07": {
+                            "type": "boolean"
+                          },
+                          "cv08": {
+                            "type": "boolean"
+                          },
+                          "cv09": {
+                            "type": "boolean"
+                          },
+                          "cv10": {
+                            "type": "boolean"
+                          },
+                          "cv11": {
+                            "type": "boolean"
+                          },
+                          "cv12": {
+                            "type": "boolean"
+                          },
+                          "cv13": {
+                            "type": "boolean"
+                          },
+                          "cv14": {
+                            "type": "boolean"
+                          },
+                          "cv15": {
+                            "type": "boolean"
+                          },
+                          "cv16": {
+                            "type": "boolean"
+                          },
+                          "cv17": {
+                            "type": "boolean"
+                          },
+                          "cv18": {
+                            "type": "boolean"
+                          },
+                          "cv19": {
+                            "type": "boolean"
+                          },
+                          "cv20": {
+                            "type": "boolean"
+                          },
+                          "cv21": {
+                            "type": "boolean"
+                          },
+                          "cv22": {
+                            "type": "boolean"
+                          },
+                          "cv23": {
+                            "type": "boolean"
+                          },
+                          "cv24": {
+                            "type": "boolean"
+                          },
+                          "cv25": {
+                            "type": "boolean"
+                          },
+                          "cv26": {
+                            "type": "boolean"
+                          },
+                          "cv27": {
+                            "type": "boolean"
+                          },
+                          "cv28": {
+                            "type": "boolean"
+                          },
+                          "cv29": {
+                            "type": "boolean"
+                          },
+                          "cv30": {
+                            "type": "boolean"
+                          },
+                          "cv31": {
+                            "type": "boolean"
+                          },
+                          "cv32": {
+                            "type": "boolean"
+                          },
+                          "cv33": {
+                            "type": "boolean"
+                          },
+                          "cv34": {
+                            "type": "boolean"
+                          },
+                          "cv35": {
+                            "type": "boolean"
+                          },
+                          "cv36": {
+                            "type": "boolean"
+                          },
+                          "cv37": {
+                            "type": "boolean"
+                          },
+                          "cv38": {
+                            "type": "boolean"
+                          },
+                          "cv39": {
+                            "type": "boolean"
+                          },
+                          "cv40": {
+                            "type": "boolean"
+                          },
+                          "cv41": {
+                            "type": "boolean"
+                          },
+                          "cv42": {
+                            "type": "boolean"
+                          },
+                          "cv43": {
+                            "type": "boolean"
+                          },
+                          "cv44": {
+                            "type": "boolean"
+                          },
+                          "cv45": {
+                            "type": "boolean"
+                          },
+                          "cv46": {
+                            "type": "boolean"
+                          },
+                          "cv47": {
+                            "type": "boolean"
+                          },
+                          "cv48": {
+                            "type": "boolean"
+                          },
+                          "cv49": {
+                            "type": "boolean"
+                          },
+                          "cv50": {
+                            "type": "boolean"
+                          },
+                          "cv51": {
+                            "type": "boolean"
+                          },
+                          "cv52": {
+                            "type": "boolean"
+                          },
+                          "cv53": {
+                            "type": "boolean"
+                          },
+                          "cv54": {
+                            "type": "boolean"
+                          },
+                          "cv55": {
+                            "type": "boolean"
+                          },
+                          "cv56": {
+                            "type": "boolean"
+                          },
+                          "cv57": {
+                            "type": "boolean"
+                          },
+                          "cv58": {
+                            "type": "boolean"
+                          },
+                          "cv59": {
+                            "type": "boolean"
+                          },
+                          "cv60": {
+                            "type": "boolean"
+                          },
+                          "cv61": {
+                            "type": "boolean"
+                          },
+                          "cv62": {
+                            "type": "boolean"
+                          },
+                          "cv63": {
+                            "type": "boolean"
+                          },
+                          "cv64": {
+                            "type": "boolean"
+                          },
+                          "cv65": {
+                            "type": "boolean"
+                          },
+                          "cv66": {
+                            "type": "boolean"
+                          },
+                          "cv67": {
+                            "type": "boolean"
+                          },
+                          "cv68": {
+                            "type": "boolean"
+                          },
+                          "cv69": {
+                            "type": "boolean"
+                          },
+                          "cv70": {
+                            "type": "boolean"
+                          },
+                          "cv71": {
+                            "type": "boolean"
+                          },
+                          "cv72": {
+                            "type": "boolean"
+                          },
+                          "cv73": {
+                            "type": "boolean"
+                          },
+                          "cv74": {
+                            "type": "boolean"
+                          },
+                          "cv75": {
+                            "type": "boolean"
+                          },
+                          "cv76": {
+                            "type": "boolean"
+                          },
+                          "cv77": {
+                            "type": "boolean"
+                          },
+                          "cv78": {
+                            "type": "boolean"
+                          },
+                          "cv79": {
+                            "type": "boolean"
+                          },
+                          "cv80": {
+                            "type": "boolean"
+                          },
+                          "cv81": {
+                            "type": "boolean"
+                          },
+                          "cv82": {
+                            "type": "boolean"
+                          },
+                          "cv83": {
+                            "type": "boolean"
+                          },
+                          "cv84": {
+                            "type": "boolean"
+                          },
+                          "cv85": {
+                            "type": "boolean"
+                          },
+                          "cv86": {
+                            "type": "boolean"
+                          },
+                          "cv87": {
+                            "type": "boolean"
+                          },
+                          "cv88": {
+                            "type": "boolean"
+                          },
+                          "cv89": {
+                            "type": "boolean"
+                          },
+                          "cv90": {
+                            "type": "boolean"
+                          },
+                          "cv91": {
+                            "type": "boolean"
+                          },
+                          "cv92": {
+                            "type": "boolean"
+                          },
+                          "cv93": {
+                            "type": "boolean"
+                          },
+                          "cv94": {
+                            "type": "boolean"
+                          },
+                          "cv95": {
+                            "type": "boolean"
+                          },
+                          "cv96": {
+                            "type": "boolean"
+                          },
+                          "cv97": {
+                            "type": "boolean"
+                          },
+                          "cv98": {
+                            "type": "boolean"
+                          },
+                          "cv99": {
+                            "type": "boolean"
+                          },
+                          "ss01": {
+                            "type": "boolean"
+                          },
+                          "ss02": {
+                            "type": "boolean"
+                          },
+                          "ss03": {
+                            "type": "boolean"
+                          },
+                          "ss04": {
+                            "type": "boolean"
+                          },
+                          "ss05": {
+                            "type": "boolean"
+                          },
+                          "ss06": {
+                            "type": "boolean"
+                          },
+                          "ss07": {
+                            "type": "boolean"
+                          },
+                          "ss08": {
+                            "type": "boolean"
+                          },
+                          "ss09": {
+                            "type": "boolean"
+                          },
+                          "ss10": {
+                            "type": "boolean"
+                          },
+                          "ss11": {
+                            "type": "boolean"
+                          },
+                          "ss12": {
+                            "type": "boolean"
+                          },
+                          "ss13": {
+                            "type": "boolean"
+                          },
+                          "ss14": {
+                            "type": "boolean"
+                          },
+                          "ss15": {
+                            "type": "boolean"
+                          },
+                          "ss16": {
+                            "type": "boolean"
+                          },
+                          "ss17": {
+                            "type": "boolean"
+                          },
+                          "ss18": {
+                            "type": "boolean"
+                          },
+                          "ss19": {
+                            "type": "boolean"
+                          },
+                          "ss20": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": []
+                      }
+                    ]
+                  },
+                  "editor.fontSize": {
+                    "type": "number",
+                    "minimum": 6,
+                    "maximum": 100
+                  },
+                  "editor.fontWeight": {
+                    "anyOf": [
+                      {
+                        "enum": [
+                          "normal",
+                          "bold"
+                        ],
+                        "type": "string"
+                      },
+                      {
+                        "type": "number",
+                        "minimum": 1,
+                        "maximum": 1000
+                      }
+                    ]
+                  },
+                  "editor.letterSpacing": {
+                    "type": "number",
+                    "minimum": -5,
+                    "maximum": 20
+                  },
+                  "editor.lineHeight": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 150
+                  },
+                  "terminal.integrated.fontFamily": {
+                    "type": "string"
+                  },
+                  "terminal.integrated.fontSize": {
+                    "type": "number",
+                    "minimum": 6,
+                    "maximum": 100
+                  },
+                  "terminal.integrated.fontWeight": {
+                    "anyOf": [
+                      {
+                        "enum": [
+                          "normal",
+                          "bold"
+                        ],
+                        "type": "string"
+                      },
+                      {
+                        "type": "number",
+                        "minimum": 1,
+                        "maximum": 1000
+                      }
+                    ]
+                  },
+                  "terminal.integrated.letterSpacing": {
+                    "type": "number",
+                    "minimum": -5,
+                    "maximum": 20
+                  },
+                  "terminal.integrated.lineHeight": {
+                    "type": "number",
+                    "minimum": 1
+                  }
+                },
+                "required": [],
+                "additionalProperties": false,
+                "description": "VS Code font settings applied by this profile."
+              }
+            },
+            "required": [
+              "name",
+              "settings"
+            ],
+            "additionalProperties": false
+          },
+          "title": "Font Profiles",
+          "description": "Named editor and terminal font profiles.",
+          "default": []
+        }
+      },
+      "required": []
+    }
   },
   "activationEvents": [],
   "engines": {

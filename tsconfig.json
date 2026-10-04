@@ -10,10 +10,11 @@
     "allowJs": false,
     "strict": true,
     "erasableSyntaxOnly": true,
+    "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/**/*.ts", "vite.config.mts"]
+  "include": ["src/**/*.ts", "scripts/**/*.ts", "vite.config.mts"]
 }

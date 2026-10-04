@@ -3,8 +3,7 @@
   "tasks": [
     {
       "label": "watch",
-      "dependsOn": ["npm: check", "npm: watch"],
-      "dependsOrder": "sequence",
+      "dependsOn": ["npm: watch"],
       "problemMatcher": [],
       "group": { "kind": "build", "isDefault": true }
     },

@@ -18,8 +18,8 @@
     "pretest": "vp check && vp pack",
     "test": "vscode-test",
     "vscode:prepublish": "pnpm run package",
-    "watch": "vp pack --filter extension --watch --on-success \"vp check\"",
-    "watch-tests": "vp pack --filter tests --watch --on-success \"vp check\""
+    "watch": "vp pack --filter extension --watch",
+    "watch-tests": "vp pack --filter tests --watch"
   },
   "dependencies": {
     "@valibot/to-json-schema": "^1.8.0",

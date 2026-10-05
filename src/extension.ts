@@ -1,8 +1,14 @@
-import { isBoolean, isNotNil, isPlainObject, isString } from 'es-toolkit'
+import { isNil, isString } from 'es-toolkit'
+import type { ObjectKeys } from 'es-toolkit/types'
+import { match, P } from 'ts-pattern'
 import * as v from 'valibot'
 import * as vscode from 'vscode'
 
 import { FontProfile } from './configuration.ts'
+
+function keyOf<T extends object>(obj: T) {
+  return Object.keys(obj) as ObjectKeys<T>[]
+}
 
 export function activate(context: vscode.ExtensionContext) {
   const disposable = vscode.commands.registerCommand('fontProfiles.switchProfile', async () => {
@@ -19,147 +25,91 @@ export function activate(context: vscode.ExtensionContext) {
       fontProfilesConfig.get('profiles')
     )
 
-    const validProfiles = success ? output : []
-
-    const picked = await vscode.window.showQuickPick(
-      validProfiles.map(it => it.name),
-      { placeHolder: 'Select a font profile' }
-    )
-    if (!picked) {
+    if (!success) {
+      vscode.window.showErrorMessage(
+        'Font profiles configuration is invalid. Check the fontProfiles.profiles setting.'
+      )
       return
     }
 
-    const profile = validProfiles.find(it => it.name === picked)
-    if (profile) {
-      const editorFontFamily = profile.settings['editor.fontFamily']
-      if (isNotNil(editorFontFamily)) {
-        const previousEditorFontFamily = editorConfig.inspect('fontFamily')?.globalValue
-        if (isString(previousEditorFontFamily)) {
-          await editorConfig.update(
-            'fontFamily',
-            [
-              editorFontFamily,
-              ...previousEditorFontFamily
-                .split(',')
-                .map(it => it.trim())
-                .filter(it => it !== editorFontFamily),
-            ].join(', '),
-            vscode.ConfigurationTarget.Global
-          )
-        } else {
-          await editorConfig.update(
-            'fontFamily',
-            editorFontFamily,
-            vscode.ConfigurationTarget.Global
-          )
-        }
-      }
+    if (output.length === 0) {
+      vscode.window.showErrorMessage(
+        'No font profiles are configured. Add a profile to the fontProfiles.profiles setting.'
+      )
+      return
+    }
 
-      const editorFontLigatures = profile.settings['editor.fontLigatures']
-      if (isBoolean(editorFontLigatures)) {
-        await editorConfig.update(
-          'fontLigatures',
-          editorFontLigatures,
-          vscode.ConfigurationTarget.Global
+    const picked = await vscode.window.showQuickPick(
+      output.map(it => it.name),
+      { placeHolder: 'Select a font profile' }
+    )
+    if (!isString(picked)) {
+      return
+    }
+
+    const profile = output.find(it => it.name === picked)
+    if (isNil(profile)) {
+      return
+    }
+
+    for (const key of keyOf(profile.settings)) {
+      await match(key)
+        .with(P.string.endsWith('fontFamily'), key =>
+          match(profile.settings[key])
+            .with(P.string, fontFamily => {
+              const config = match(key)
+                .with(P.string.startsWith('editor'), () => editorConfig)
+                .with(P.string.startsWith('terminal.integrated'), () => terminalIntegratedConfig)
+                .exhaustive()
+              return config.update(
+                'fontFamily',
+                [
+                  fontFamily,
+                  ...match(config.inspect('fontFamily')?.globalValue)
+                    .with(P.string, v => v)
+                    .otherwise(() => '')
+                    .split(',')
+                    .map(it => it.trim())
+                    .filter(it => it !== '' && it !== fontFamily),
+                ].join(', '),
+                vscode.ConfigurationTarget.Global
+              )
+            })
+            .otherwise(() => {})
         )
-      } else if (isPlainObject(editorFontLigatures)) {
-        await editorConfig.update(
-          'fontLigatures',
-          Object.entries(editorFontLigatures)
-            .map(([feature, enabled]) => `'${feature}' ${enabled ? 'on' : 'off'}`)
-            .join(', '),
-          vscode.ConfigurationTarget.Global
+
+        .with('editor.fontLigatures', () =>
+          match(profile.settings['editor.fontLigatures'])
+            .with(P.boolean, fontLigatures =>
+              editorConfig.update('fontLigatures', fontLigatures, vscode.ConfigurationTarget.Global)
+            )
+            .with(P.record(P.string, P.boolean), fontLigatures =>
+              editorConfig.update(
+                'fontLigatures',
+                Object.entries(fontLigatures)
+                  .map(([feature, enabled]) => `'${feature}' ${enabled ? 'on' : 'off'}`)
+                  .join(', '),
+                vscode.ConfigurationTarget.Global
+              )
+            )
+            .otherwise(() => {})
         )
-      }
 
-      const editorFontSize = profile.settings['editor.fontSize']
-      if (isNotNil(editorFontSize)) {
-        await editorConfig.update('fontSize', editorFontSize, vscode.ConfigurationTarget.Global)
-      }
-
-      const editorFontWeight = profile.settings['editor.fontWeight']
-      if (isNotNil(editorFontWeight)) {
-        await editorConfig.update('fontWeight', editorFontWeight, vscode.ConfigurationTarget.Global)
-      }
-
-      const editorFontLetterSpacing = profile.settings['editor.letterSpacing']
-      if (isNotNil(editorFontLetterSpacing)) {
-        await editorConfig.update(
-          'letterSpacing',
-          editorFontLetterSpacing,
-          vscode.ConfigurationTarget.Global
+        .otherwise(key =>
+          match(profile.settings[key])
+            .with(P.nonNullable, value =>
+              match(key)
+                .with(P.string.startsWith('editor'), () => editorConfig)
+                .with(P.string.startsWith('terminal.integrated'), () => terminalIntegratedConfig)
+                .exhaustive()
+                .update(
+                  key.replaceAll('editor.', '').replaceAll('terminal.integrated.', ''),
+                  value,
+                  vscode.ConfigurationTarget.Global
+                )
+            )
+            .otherwise(() => {})
         )
-      }
-
-      const editorFontLinHeight = profile.settings['editor.lineHeight']
-      if (isNotNil(editorFontLinHeight)) {
-        await editorConfig.update(
-          'lineHeight',
-          editorFontLinHeight,
-          vscode.ConfigurationTarget.Global
-        )
-      }
-
-      const terminalIntegratedFontFamily = profile.settings['terminal.integrated.fontFamily']
-      if (isString(terminalIntegratedFontFamily)) {
-        const previousTerminalIntegratedFontFamily =
-          terminalIntegratedConfig.inspect('fontFamily')?.globalValue
-        if (isString(previousTerminalIntegratedFontFamily)) {
-          await terminalIntegratedConfig.update(
-            'fontFamily',
-            [
-              terminalIntegratedFontFamily,
-              ...previousTerminalIntegratedFontFamily
-                .split(',')
-                .map(it => it.trim())
-                .filter(it => it !== terminalIntegratedFontFamily),
-            ].join(', '),
-            vscode.ConfigurationTarget.Global
-          )
-        } else {
-          await terminalIntegratedConfig.update(
-            'fontFamily',
-            terminalIntegratedFontFamily,
-            vscode.ConfigurationTarget.Global
-          )
-        }
-      }
-
-      const terminalIntegratedFontSize = profile.settings['terminal.integrated.fontSize']
-      if (isNotNil(terminalIntegratedFontSize)) {
-        await terminalIntegratedConfig.update(
-          'fontSize',
-          terminalIntegratedFontSize,
-          vscode.ConfigurationTarget.Global
-        )
-      }
-
-      const terminalIntegratedFontWeight = profile.settings['terminal.integrated.fontWeight']
-      if (isNotNil(terminalIntegratedFontWeight)) {
-        await terminalIntegratedConfig.update(
-          'fontWeight',
-          terminalIntegratedFontWeight,
-          vscode.ConfigurationTarget.Global
-        )
-      }
-
-      const terminalIntegratedLetterSpacing = profile.settings['terminal.integrated.letterSpacing']
-      if (isNotNil(terminalIntegratedLetterSpacing)) {
-        await terminalIntegratedConfig.update(
-          'letterSpacing',
-          terminalIntegratedLetterSpacing,
-          vscode.ConfigurationTarget.Global
-        )
-      }
-
-      const terminalIntegratedLineHeight = profile.settings['terminal.integrated.lineHeight']
-      if (isNotNil(terminalIntegratedLineHeight)) {
-        await terminalIntegratedConfig.update(
-          'lineHeight',
-          terminalIntegratedLineHeight,
-          vscode.ConfigurationTarget.Global
-        )
-      }
     }
   })
 

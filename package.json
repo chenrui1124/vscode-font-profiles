@@ -27,6 +27,7 @@
     "lint": "vp lint",
     "package": "vsce package --no-dependencies",
     "pretest": "vp check && vp pack",
+    "release": "pnpm build && bumpp --commit \"v%s\" --no-push",
     "test": "vscode-test",
     "vscode:prepublish": "pnpm run build",
     "watch": "vp pack --filter extension --watch",
@@ -46,6 +47,7 @@
     "@types/vscode": "^1.140.0",
     "@vscode/test-cli": "^0.0.15",
     "@vscode/test-electron": "^3.0.0",
+    "@vscode/vsce": "^4.0.0",
     "bumpp": "^12.3.0",
     "vite-plus": "^1.0.0"
   },

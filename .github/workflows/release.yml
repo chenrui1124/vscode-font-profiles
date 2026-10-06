@@ -1,0 +1,69 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check release commit
+        run: |
+          if ! git merge-base --is-ancestor HEAD origin/main; then
+            echo "::error::The tagged commit must be on origin/main. Push main before the release tag."
+            exit 1
+          fi
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: '12.9.1'
+          cache: false
+
+      - name: Check release version
+        run: |
+          package_name="$(node -p "require('./package.json').name")"
+          package_version="$(node -p "require('./package.json').version")"
+          if [[ "$GITHUB_REF_NAME" != "v$package_version" ]]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match package.json version $package_version."
+            exit 1
+          fi
+          printf 'VSIX_PATH=%s/%s-%s.vsix\n' "$RUNNER_TEMP" "$package_name" "$package_version" >> "$GITHUB_ENV"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build and package VSIX
+        # vsce runs vscode:prepublish, which includes the build and checks.
+        run: pnpm exec vsce package --no-dependencies --out "$VSIX_PATH"
+
+      - name: Create GitHub Release and upload VSIX
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: gh release create "$GITHUB_REF_NAME" "$VSIX_PATH" --verify-tag --title "$GITHUB_REF_NAME" --generate-notes

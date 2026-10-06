@@ -2,8 +2,19 @@
   "name": "font-profiles",
   "displayName": "Font Profiles",
   "version": "0.0.0",
-  "description": "",
-  "categories": [],
+  "private": true,
+  "description": "Quickly switch font profiles in Visual Studio Code.",
+  "categories": [
+    "Other"
+  ],
+  "homepage": "https://github.com/chenrui1124/vscode-font-profiles",
+  "bugs": "https://github.com/chenrui1124/vscode-font-profiles/issues",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chenrui1124/vscode-font-profiles"
+  },
+  "publisher": "cr1124",
   "type": "module",
   "main": "./dist/extension.js",
   "scripts": {
@@ -14,10 +25,10 @@
     "compile-tests": "vp check && vp pack --filter tests",
     "generate-schema": "node scripts/generate-schema.ts",
     "lint": "vp lint",
-    "package": "vp run build",
+    "package": "vsce package --no-dependencies",
     "pretest": "vp check && vp pack",
     "test": "vscode-test",
-    "vscode:prepublish": "pnpm run package",
+    "vscode:prepublish": "pnpm run build",
     "watch": "vp pack --filter extension --watch",
     "watch-tests": "vp pack --filter tests --watch"
   },
@@ -35,6 +46,7 @@
     "@types/vscode": "^1.140.0",
     "@vscode/test-cli": "^0.0.15",
     "@vscode/test-electron": "^3.0.0",
+    "bumpp": "^12.3.0",
     "vite-plus": "^1.0.0"
   },
   "overrides": {
@@ -896,6 +908,7 @@
     }
   },
   "activationEvents": [],
+  "preview": true,
   "engines": {
     "vscode": "^1.140.0"
   }

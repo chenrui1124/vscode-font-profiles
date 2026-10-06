@@ -147,13 +147,6 @@ const openTypeFeatureTags: readonly OpenTypeFeatureTag[] = [
   ...(range(1, 21).map(n => `ss${String(n).padStart(2, '0')}`) as OpenTypeFeatureTag[]),
 ]
 
-const FontSize = v.pipe(v.number(), v.minValue(6), v.maxValue(100))
-
-const FontWeight = v.union([
-  v.picklist(['normal', 'bold']),
-  v.pipe(v.number(), v.minValue(1), v.maxValue(1000)),
-])
-
 const FontFeatures = v.object(
   zipObject(
     openTypeFeatureTags,
@@ -161,8 +154,19 @@ const FontFeatures = v.object(
   )
 )
 
+const FontWeight = v.union([
+  v.picklist(['normal', 'bold']),
+  v.pipe(v.number(), v.minValue(1), v.maxValue(1000)),
+])
+
+const FontSize = v.pipe(v.number(), v.minValue(6), v.maxValue(100))
+
 export const FontProfile = v.strictObject({
   name: v.pipe(v.string(), v.minLength(1), v.description('Name of the font profile.')),
+  description: v.pipe(
+    v.optional(v.string()),
+    v.description('Additional text shown next to the profile name when selecting a profile.')
+  ),
   settings: v.pipe(
     v.partial(
       v.strictObject({

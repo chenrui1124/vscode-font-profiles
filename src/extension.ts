@@ -1,14 +1,10 @@
-import { isNil, isString } from 'es-toolkit'
-import type { ObjectKeys } from 'es-toolkit/types'
+import { isNil } from 'es-toolkit'
 import { match, P } from 'ts-pattern'
 import * as v from 'valibot'
 import * as vscode from 'vscode'
 
 import { FontProfile } from './configuration.ts'
-
-function keyOf<T extends object>(obj: T) {
-  return Object.keys(obj) as ObjectKeys<T>[]
-}
+import { keyOf, parseFontFamily, uniqFontFamily } from './utils.ts'
 
 export function activate(context: vscode.ExtensionContext) {
   const disposable = vscode.commands.registerCommand('fontProfiles.switchProfile', async () => {
@@ -26,31 +22,31 @@ export function activate(context: vscode.ExtensionContext) {
     )
 
     if (!success) {
-      vscode.window.showErrorMessage(
+      await vscode.window.showErrorMessage(
         'Font profiles configuration is invalid. Check the fontProfiles.profiles setting.'
       )
       return
     }
 
     if (output.length === 0) {
-      vscode.window.showErrorMessage(
+      await vscode.window.showErrorMessage(
         'No font profiles are configured. Add a profile to the fontProfiles.profiles setting.'
       )
       return
     }
 
     const picked = await vscode.window.showQuickPick(
-      output.map(it => it.name),
+      output.map(it => ({
+        label: it.name,
+        description: it.description,
+        profile: it,
+      })),
       { placeHolder: 'Select a font profile' }
     )
-    if (!isString(picked)) {
+    if (isNil(picked)) {
       return
     }
-
-    const profile = output.find(it => it.name === picked)
-    if (isNil(profile)) {
-      return
-    }
+    const { profile } = picked
 
     for (const key of keyOf(profile.settings)) {
       await match(key)
@@ -63,15 +59,12 @@ export function activate(context: vscode.ExtensionContext) {
                 .exhaustive()
               return config.update(
                 'fontFamily',
-                [
-                  fontFamily,
+                uniqFontFamily([
+                  ...parseFontFamily(fontFamily),
                   ...match(config.inspect('fontFamily')?.globalValue)
-                    .with(P.string, v => v)
-                    .otherwise(() => '')
-                    .split(',')
-                    .map(it => it.trim())
-                    .filter(it => it !== '' && it !== fontFamily),
-                ].join(', '),
+                    .with(P.string, parseFontFamily)
+                    .otherwise(() => []),
+                ]).join(', '),
                 vscode.ConfigurationTarget.Global
               )
             })

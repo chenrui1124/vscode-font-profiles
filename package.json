@@ -75,6 +75,10 @@
                 "minLength": 1,
                 "description": "Name of the font profile."
               },
+              "description": {
+                "type": "string",
+                "description": "Additional text shown next to the profile name when selecting a profile."
+              },
               "settings": {
                 "type": "object",
                 "properties": {
